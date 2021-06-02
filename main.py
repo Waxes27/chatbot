@@ -78,7 +78,9 @@ def read_instagram(type_of_file, base_dir,i):
  
                     
 def read_resource(base_dir,type_of_file,i):
-    
+    '''
+    reads the differrent directories
+    '''
     global count
 
     if type_of_file == "instagram json":
