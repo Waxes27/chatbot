@@ -6,6 +6,8 @@ base = "Data"
 question_words = ["what","why","who","is","when","how","are", "?"]
 count = 0
 
+base = "Data"
+
 
 def get_folders():
     tmp = []
@@ -90,6 +92,16 @@ def main():
     # instagram_messages_inbox()
     
     
+def get_help(error):
+    if IndexError:
+        print("Missing parameter python3 main.py [FOLDER]")
+    
+
+def main():
+    
+    requested_folders = get_folders()
+
+    print(requested_folders)
 
 
 main()
