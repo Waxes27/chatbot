@@ -1,4 +1,3 @@
-# from _typeshed import FileDescriptor
 import os
 import sys
 import json
@@ -12,7 +11,7 @@ questions = []
 responses = []
 
 twitter_questions = []
-twitter_final = []
+twitter_final_list = []
 
 duplicate_instagram_questions = []
 instagram_questions = []
@@ -29,7 +28,7 @@ def get_folders():
 
     
     for dir, folder, files in os.walk(base):
-    
+        
         try:
 
             if len(folder) != 0 and sys.argv[1] in dir.lower():
@@ -40,40 +39,51 @@ def get_folders():
             
             get_help(e)
             exit()
+            
     return tmp
 
 
 def get_help(error):
     
     if IndexError:
+        
         print("Missing parameter python3 main.py [FOLDER]")
 
 
 def print_request(requested):
     
     if len(requested) == 0:
+        
         print("The requested resource is empty or not found")
+        
     else:
+        
         for i in requested:
+            
             print(i)
 
 def read_instagram(type_of_file, base_dir,i):
 
     try:
+        
         filename = base_dir+"/"+i[0]
         with open(filename,"r") as f:
 
             message = json.load(f)
             
             if message['messages'][0]['sender_name'] != "WeThinkCode_":
+                
                 for i in question_words:
+                    
                     if i in message['messages'][0]['content']:
                         
                         duplicate_instagram_questions.append(message['messages'][0]['content'])
                         
                         for j in duplicate_instagram_questions:
+                            
                             if j not in instagram_questions:
-                                instagram_questions.append(j)                   
+                                
+                                instagram_questions.append(j)
                 
     except (json.decoder.JSONDecodeError, UnicodeDecodeError, KeyError):
         pass
@@ -85,7 +95,8 @@ def read_instagram_resource(base_dir,type_of_file,i):
     '''
     global count
 
-    if type_of_file == "instagram json":
+    if type_of_file == ".json":
+        
         read_instagram(type_of_file, base_dir, i)
 
 
@@ -98,42 +109,65 @@ def instagram_messages_inbox():
         
         if len(files) != 0:
             
-            read_instagram_resource(dir,"instagram json", files)
+            read_instagram_resource(dir,".json", files)
 
 
 def read_twitter(type_of_file, base_dir, i):
-    # print(i)
 
+    filename = base_dir+"/"+i[0]
     
     try:
-        filename = base_dir+"/"+i[0]
+        
         with open(filename,"r") as f:
+                        
             data = f.read()
             jsonData = js2py.eval_js(f'{data}')
-            
+        
             for j in jsonData:
+                
                 for key, value in j.items():
 
-                    if value['messages'][0]['messageCreate']['senderId'] != "2977649117":
-                        for word in question_words:
-                            
-                            if word in value['messages'][0]['messageCreate']['text']:
-                                # twitter_questions.append(value['messages'][0]['messageCreate']['text'])
-                                print(value['messages'][0]['messageCreate']['text'])
+                    try:                   
+                        if value['messages'][0]['messageCreate']['senderId'] != "2977649117":
 
-    except (json.decoder.JSONDecodeError, UnicodeDecodeError, KeyError):
-        pass
-        
+                            for word in question_words:
+                                
+                                    if word in value['messages'][0]['messageCreate']['text']:
+                                        
+                                        twitter_questions.append(value['messages'][0]['messageCreate']['text'])
 
-    # pass
-    
+                                        for final_questions in twitter_questions:
+                                            
+                                            if final_questions not in twitter_final_list:
+                                                
+                                                twitter_final_list.append(final_questions)
+                    
+                    except KeyError as e:
+                        
+                        if value['messages'][0]["welcomeMessageCreate"]['senderId'] != "2977649117":
+
+                            for word in question_words:
+                                
+                                    if word in value['messages'][0]["welcomeMessageCreate"]['text']:
+                                        
+                                        twitter_questions.append(value['messages'][0]["welcomeMessageCreate"]['text'])
+
+                                        for final_questions in twitter_questions:
+                                            
+                                            if final_questions not in twitter_final_list:
+                                                
+                                                twitter_final_list.append(final_questions)                           
+
+    except (json.decoder.JSONDecodeError, UnicodeDecodeError):
+        print("There was an error encrypting")
+        exit()
+      
 
 def read_twitter_resource(base_dir,type_of_file,i):
     
-    if type_of_file == "twitter js":
-        read_twitter(type_of_file, base_dir, i)
+    if type_of_file == ".js":
 
-        # pass
+        read_twitter(type_of_file, base_dir, i)
     
     
     
@@ -142,18 +176,16 @@ def twitter_messages_inbox():
     resource = "Data/twitter/twitter-2021-05-26-17480c63da92aaa2744379d2492a6129c4432411f2f50759e4037730274b70cb/data"
     
     for dir, folder, files in os.walk(resource):
-        
+
         if len(files) != 0:
             
-            read_twitter_resource(dir, "twitter js", files)
-            # print(files)
-            # exit()
-    
+            read_twitter_resource(dir, ".js", files)   
     
     
 def get_help(error):
     
     if IndexError:
+        
         print("Missing parameter python3 main.py [FOLDER]")
     
 
