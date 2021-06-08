@@ -113,6 +113,12 @@ def instagram_messages_inbox():
 
 
 def read_twitter(type_of_file, base_dir, i):
+    '''
+    Reads the content from direct messages in twitter
+    :param: type_of_file: this is the type of file
+    :param: base_dir: the root directory
+    :param: i: all the folders inside twitter directories
+    '''
 
     filename = base_dir+"/"+i[0]
     
