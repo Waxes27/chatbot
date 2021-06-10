@@ -84,6 +84,7 @@ def read_instagram(type_of_file, base_dir,i):
                             if j not in instagram_questions:
                                 
                                 instagram_questions.append(j)
+            # print(instagram_questions)
                 
     except (json.decoder.JSONDecodeError, UnicodeDecodeError, KeyError):
         pass
@@ -103,7 +104,6 @@ def read_instagram_resource(base_dir,type_of_file,i):
 def instagram_messages_inbox():
     
     resource = "Data/instagram/messages/inbox/"
-    
 
     for dir, folder, files in os.walk(resource):
         
@@ -127,8 +127,12 @@ def read_twitter(type_of_file, base_dir, i):
         with open(filename,"r") as f:
                         
             data = f.read()
-            jsonData = js2py.eval_js(f'{data}')
-        
+            try:
+                jsonData = js2py.eval_js(f'{data}')
+
+            except js2py.internals.simplex.JsException:
+                jsonData = ""
+
             for j in jsonData:
                 
                 for key, value in j.items():
@@ -162,7 +166,8 @@ def read_twitter(type_of_file, base_dir, i):
                                             
                                             if final_questions not in twitter_final_list:
                                                 
-                                                twitter_final_list.append(final_questions)                           
+                                                twitter_final_list.append(final_questions)       
+        # print(twitter_final_list)                    
 
     except (json.decoder.JSONDecodeError, UnicodeDecodeError):
         print("There was an error encrypting")
@@ -195,11 +200,28 @@ def get_help(error):
         print("Missing parameter python3 main.py [FOLDER]")
     
 
+def write_to_files():
+    with open("faqs.txt", "a+") as f:
+        for i in instagram_questions:
+            f.write(i+"\n\n\n\n\n\n")
+
 def main():
     
     requested_folders = get_folders()
-    instagram_messages_inbox()
-    twitter_messages_inbox()
+
+    if "instagram" in sys.argv:
+        
+        instagram_messages_inbox()
+        
+        if "instagram" in sys.argv and "write" in sys.argv:
+            write_to_files()
+            
+    # elif "twitter" in sys.argv:
+    #     # twitter_messages_inbox()
+    #     if "twitter" in sys.argv and "write" in sys.argv:
+    #         write_to_files()
+    #     pass
+
 
 
 main()
